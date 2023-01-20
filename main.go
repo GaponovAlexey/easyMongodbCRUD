@@ -52,13 +52,21 @@ func main() {
 	e.Logger.Debug(e.Start(":3000"))
 }
 
+// func getData(c echo.Context) error {
+// 	var product []Product
+// 	ca, err := db.Find(ctx, bson.M{})
+// 	cancel(err)
+// 	err = ca.All(ctx, &product)
+
+//		return c.JSON(http.StatusOK, product)
+//	}
 func getData(c echo.Context) error {
-	var product []Product
+	var prod []Product
+
 	ca, err := db.Find(ctx, bson.M{})
 	cancel(err)
-	err = ca.All(ctx, &product)
-
-	return c.JSON(http.StatusOK, product)
+	ca.All(ctx, &prod)
+	return c.JSON(http.StatusOK, prod)
 }
 
 func addData(c echo.Context) error {
