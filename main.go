@@ -96,7 +96,7 @@ func addData(c echo.Context) error {
 	// }
 	return c.JSON(http.StatusOK, "success")
 }
-
+//PUT PATCH
 func putData(c echo.Context) error {
 	var prod Product
 
@@ -120,7 +120,7 @@ func putData(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, prod)
 }
-
+//DELETE
 func deleteProd(c echo.Context) error {
 	gID, err := primitive.ObjectIDFromHex(c.Param("id"))
 	cancel(err)
