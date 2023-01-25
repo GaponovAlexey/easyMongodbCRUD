@@ -47,6 +47,7 @@ func init() {
 func main() {
 
 	e.GET("/", getData)
+	e.GET("/:id", getDataID)
 	e.POST("/", addData)
 
 	e.Logger.Debug(e.Start(":3000"))
@@ -64,18 +65,15 @@ func getData(c echo.Context) error {
 
 // getId
 func getDataID(c echo.Context) error {
-	var prod []Product
-	var prodId map[string]interface{}
-	gId := c.Param("id")
-	ca, err := DB.Find(ctx, bson.M{})
+	var prodId Product
+	gId, err := primitive.ObjectIDFromHex(c.Param("id"))
 	cancel(err)
-	ca.All(ctx, &prod)
-	for _, v := range prod {
-		for k := range v {
-			if k == gId {
+	filter := bson.M{"_id": gId}
 
-			}
-		}
+	f := DB.FindOne(ctx, filter)
+
+	if err := f.Decode(&prodId); err != nil {
+		return err
 	}
 
 	return c.JSON(http.StatusOK, prodId)
@@ -83,15 +81,15 @@ func getDataID(c echo.Context) error {
 
 // post
 func addData(c echo.Context) error {
-	var products []Product
+	var products Product
 	if err := c.Bind(&products); err != nil {
 		return err
 	}
-	for _, prod := range products {
+	// for _, prod := range products {
 
-		prod.ID = primitive.NewObjectID()
-		_, err := DB.InsertOne(ctx, prod)
-		cancel(err)
-	}
+	products.ID = primitive.NewObjectID()
+	_, err := DB.InsertOne(ctx, products)
+	cancel(err)
+	// }
 	return c.JSON(http.StatusOK, "success")
 }
