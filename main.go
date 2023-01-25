@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -49,6 +50,8 @@ func main() {
 	e.GET("/", getData)
 	e.GET("/:id", getDataID)
 	e.POST("/", addData)
+	e.PUT("/:id", putData)
+	e.DELETE("/:id", deleteProd)
 
 	e.Logger.Debug(e.Start(":3000"))
 }
@@ -91,5 +94,40 @@ func addData(c echo.Context) error {
 	_, err := DB.InsertOne(ctx, products)
 	cancel(err)
 	// }
+	return c.JSON(http.StatusOK, "success")
+}
+
+func putData(c echo.Context) error {
+	var prod Product
+
+	gID, err := primitive.ObjectIDFromHex(c.Param("id"))
+
+	cancel(err)
+	filter := bson.M{"_id": gID}
+	f := DB.FindOne(ctx, filter)
+
+	if err := f.Decode(&prod); err != nil {
+		return err
+	}
+
+	if err := json.NewDecoder(c.Request().Body).Decode(&prod); err != nil {
+		return err
+	}
+
+	newData := bson.M{"$set": prod}
+
+	DB.UpdateOne(ctx, filter, newData)
+
+	return c.JSON(http.StatusOK, prod)
+}
+
+func deleteProd(c echo.Context) error {
+	gID, err := primitive.ObjectIDFromHex(c.Param("id"))
+	cancel(err)
+	filter := bson.M{"_id": gID}
+
+	_, err = DB.DeleteOne(ctx, filter)
+	cancel(err)
+
 	return c.JSON(http.StatusOK, "success")
 }
