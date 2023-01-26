@@ -82,7 +82,7 @@ func getDataID(c echo.Context) error {
 	return c.JSON(http.StatusOK, prodId)
 }
 
-// post
+//POST 
 func addData(c echo.Context) error {
 	var products Product
 	if err := c.Bind(&products); err != nil {
