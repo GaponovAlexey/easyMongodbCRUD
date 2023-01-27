@@ -56,7 +56,7 @@ func main() {
 	e.Logger.Debug(e.Start(":3000"))
 }
 
-// get
+// GET
 func getData(c echo.Context) error {
 	var prod []Product
 
