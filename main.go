@@ -120,6 +120,7 @@ func putData(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, prod)
 }
+
 //DELETE
 func deleteProd(c echo.Context) error {
 	gID, err := primitive.ObjectIDFromHex(c.Param("id"))
